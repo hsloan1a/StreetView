@@ -4,9 +4,10 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Conv2D
 from keras.layers import MaxPooling2D
-from keras.layers import Flatten, Dense
+from keras.layers import Flatten, Dense, Dropout
 from keras.utils import np_utils
 import numpy as np
+#from keras.layers.normalization import BatchNormalization
 from sklearn.preprocessing import LabelEncoder
 from sklearn.cross_validation import train_test_split
 from skimage import io
@@ -61,10 +62,10 @@ testHolder = np.vstack((x_train_with_pole, x_train_without_pole));
 #print(x_train_without_pole.size)
 #print(testHolder.size)
 # Split dataset in train and test.
-print('$$$$$')
-print(y_train_with_pole)
-print(y_train_without_pole)
-print('$$$$$$$')
+#print('$$$$$')
+#print(y_train_with_pole)
+#print(y_train_without_pole)
+#print('$$$$$$$')
 testHolder2 = np.concatenate((y_train_with_pole, y_train_without_pole));
 x_train, x_test, y_train, y_test = train_test_split(testHolder,
        testHolder2, test_size=0.2, random_state=1) 
@@ -72,16 +73,17 @@ x_train, x_test, y_train, y_test = train_test_split(testHolder,
 
 
 
-
 model = Sequential()
 #Conv2D is used for images Conv = https://en.wikipedia.org/wiki/Kernel_(image_processing)
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=[600, 300, 1]))
+#model.add(BatchNormalization())
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 #Flatten used to make it a (x,) array.
 model.add(Flatten())
 model.add(Dense(32, activation='relu'))
-model.add(Dense(1, activation='softmax'))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid'))
 
 
 # Compile model and tell it we only want a 0 or 1 output
